@@ -1,52 +1,39 @@
-from collections import deque
+graph = {
+  'A' : ['B','C'],
+  'B' : ['D', 'E'],
+  'C' : ['F'],
+  'D' : [],
+  'E' : ['F'],
+  'F' : []
+}
 
-# Define the grid
-grid = [
-    ['S', '.', '.', '.', '.'],
-    ['.', 'X', 'X', '.', '.'],
-    ['.', '.', '.', '.', 'X'],
-    ['.', 'X', '.', '.', '.'],
-    ['.', '.', '.', 'X', 'G']
-]
+visited_bfs = []
+queue = []
 
-# Define the dimensions of the grid
-ROWS = len(grid)
-COLS = len(grid[0])
+def bfs(visited_bfs, graph, node):
+  visited_bfs.append(node)
+  queue.append(node)
 
-# Define directions: up, down, left, right
-directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+  while queue:
+    s = queue.pop(0) 
+    print (s, end = " ") 
 
-# Function to perform BFS
-def bfs(start_row, start_col, goal_row, goal_col):
-    queue = deque([(start_row, start_col, [])])
-    visited = set()
-    while queue:
-        row, col, path = queue.popleft()
-        if (row, col) == (goal_row, goal_col):
-            return path
-        if (row, col) in visited:
-            continue
-        visited.add((row, col))
-        for dr, dc in directions:
-            new_row, new_col = row + dr, col + dc
-            if 0 <= new_row < ROWS and 0 <= new_col < COLS and grid[new_row][new_col] != 'X':
-                queue.append((new_row, new_col, path + [(new_row, new_col)]))
-    return None
+    for neighbour in graph[s]:
+      if neighbour not in visited_bfs:
+        visited_bfs.append(neighbour)
+        queue.append(neighbour)
 
-# Starting position
-start_row, start_col = 0, 0
-# Goal position
-goal_row, goal_col = 4, 4
+visited = set()
 
-# Find the shortest path using BFS
-path = bfs(start_row, start_col, goal_row, goal_col)
+def dfs(visited, graph, node):
+    if node not in visited:
+        print (node, end=" ")
+        visited.add(node)
+        for neighbour in graph[node]:
+            dfs(visited, graph, neighbour)
 
-# Print the path
-if path:
-    print("Shortest path from start to goal:")
-    for row, col in path:
-        grid[row][col] = '*'
-    for row in grid:
-        print(' '.join(row))
-else:
-    print("No path found!")
+print("BFS:" , end =" ")
+bfs(visited_bfs, graph, 'A')
+print('\n')
+print("DFS:" , end =" ")
+dfs(visited, graph, 'A')
