@@ -1,51 +1,54 @@
-def find_path(maze, start_row, start_col, end_row, end_col):
-    
-  rows, cols = len(maze), len(maze[0])
-  directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # Up, Right, Down, Left
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
 
-  visited = [[False for _ in range(cols)] for _ in range(rows)]  # Keep track of visited cells
+# ITERATIVE APPROACH
 
-  def dfs(row, col):
-    # Check if we reached the end
-    if row == end_row and col == end_col:
-      return [(row, col)]
+class Solution(object):
+    def rangeSumBST(self, root, L, R):
+        def dfs(node):
+            if node:
+                if L <= node.val <= R:
+                    self.ans += node.val
+                if L < node.val:
+                    dfs(node.left)
+                if node.val < R:
+                    dfs(node.right)
 
-    # Mark current cell as visited
-    visited[row][col] = True
+        self.ans = 0
+        dfs(root)
+        return self.ans
 
-    # Explore all four directions
-    for dx, dy in directions:
-      new_row, new_col = row + dx, col + dy
 
-      # Check if new position is valid and not visited
-      if 0 <= new_row < rows and 0 <= new_col < cols and not visited[new_row][new_col] and maze[new_row][new_col] == 0:
-        # Try exploring from this point
-        path = dfs(new_row, new_col)
-        # If a path is found, prepend the current cell and return
-        if path:
-          return [(row, col)] + path
 
-    # Backtrack if no path found from this cell
-    return None
+# RECURSIVE APPROACH
 
-  # Start DFS from the starting position
-  path = dfs(start_row, start_col)
-  return path
 
-# Example usage
-maze = [
-  [0, 1, 0, 0],
-  [0, 0, 0, 0],
-  [0, 1, 0, 1],
-  [0, 0, 0, 0],
-]
+def rangeSumBST(root, L, R):
+    ans = 0
+    stack = [root]
+    while stack:
+        node = stack.pop()
+        if node:
+            if L <= node.val <= R:
+                ans += node.val
+            if L < node.val:
+                stack.append(node.left)
+            if node.val < R:
+                stack.append(node.right)
+    return ans
 
-start_row, start_col = 0, 0
-end_row, end_col = 3, 3
+bst = TreeNode(10)
+bst.left = TreeNode(5)
+bst.right = TreeNode(15)
+bst.left.left = TreeNode(3)
+bst.left.right = TreeNode(7)
+bst.right.right = TreeNode(18)
 
-path = find_path(maze, start_row, start_col, end_row, end_col)
+min = int(input("Enter the Lower value of the range : "))
+max = int(input("Enter the Higher value of the range : "))
 
-if path:
-  print("Path found:", path)
-else:
-  print("No path found")
+sol = rangeSumBST(bst, min, max)
+print(f"The sum of the nodes in the range {min} and {max} is {sol}")
